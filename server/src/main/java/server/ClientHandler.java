@@ -13,6 +13,7 @@ public class ClientHandler {
 
     private boolean authenticated;
     private String nickname;
+    private String login;
 
     public ClientHandler(Socket socket, Server server) {
         try {
@@ -37,16 +38,28 @@ public class ClientHandler {
                             String[] token = str.split ("\\s+");
                             nickname = server.getAuthService ()
                                     .getNicknameByLoginAndPassword (token[1], token[2]);
+                            login = token[1];
                             if (nickname != null) {
-                                server.subscribe (this);
-                                authenticated = true;
-                                sendMsg ("/authok " + nickname);
-                                break;
+                                if (!server.isLoginAuthenticated (login)) {
+                                    sendMsg ("/authok " + nickname);
+                                    server.subscribe (this);
+                                    authenticated = true;
+                                    break;
+                                } else {
+                                    sendMsg ("login already used");
+                                }
                             } else {
                                 sendMsg ("Password or login not correct");
                             }
                         }
+                        if (str.startsWith ("/reg ")) {
+                            String[] token = str.split ("\\s+");
+                            if (token.length < 4) {
+                                continue;
+                            }
+                        }
                     }
+
 
                     //work cycle
                     while (authenticated) {
@@ -59,10 +72,10 @@ public class ClientHandler {
                             }
                             if (str.startsWith ("/w")) {
                                 String[] token = str.split ("\\s+", 3);
-                                if (token.length < 3){
+                                if (token.length < 3) {
                                     continue;
                                 }
-                                server.privateMsg (this,token[1],token[2]);
+                                server.privateMsg (this, token[1], token[2]);
                             }
                         } else {
                             server.broadcastMsg (this, str);
@@ -79,9 +92,11 @@ public class ClientHandler {
                     }
                 }
             }).start ();
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             e.printStackTrace ();
         }
+
     }
 
     public void sendMsg(String msg) {
@@ -94,5 +109,10 @@ public class ClientHandler {
 
     public String getNickname() {
         return nickname;
+    }
+
+
+    public String getLogin() {
+        return login;
     }
 }
