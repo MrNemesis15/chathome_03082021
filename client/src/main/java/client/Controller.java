@@ -111,6 +111,14 @@ public class Controller implements Initializable {
                                 setAuthenticated (true);
                                 break;
                             }
+
+                            if (str.equals ("/regok")) {
+                                regController.regResult ("Registration complete");
+                            }
+                            if (str.equals ("/regno")) {
+                                regController.regResult ("Registration failed, login or nickname already used ");
+                            }
+
                         } else {
                             textArea.appendText (str + "\n");
                         }
@@ -228,7 +236,7 @@ public class Controller implements Initializable {
         regStage.show ();
     }
 
-    public void registration(String login, String password, String  nickname){
+    public void registration(String login, String password, String nickname) {
         String msg = String.format ("/reg %s %s %s", login, password, nickname);
         if (socket == null || socket.isClosed ()) {
             connect ();

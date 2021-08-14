@@ -57,6 +57,14 @@ public class ClientHandler {
                             if (token.length < 4) {
                                 continue;
                             }
+
+                            boolean regOk = server.getAuthService ().registration (token[1], token[2], token[3]);
+                            if (regOk) {
+                                sendMsg ("/regok");
+                            } else {
+                                sendMsg ("/regno");
+
+                            }
                         }
                     }
 

@@ -41,7 +41,12 @@ public class RegController {
             return;
         }
 
-        controller.registration (login,password,nickname);
+        controller.registration (login, password, nickname);
     }
+
+    public void regResult(String msg) {
+        textArea.appendText (msg + "\n");
+    }
+
 
 }
